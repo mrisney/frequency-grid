@@ -4,6 +4,12 @@ import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'frequency-grid',
   template: `
+  <select class="form-control">
+    <option value=""></option>
+    <option value="datasource1">Datasource1</option>
+    <option value="datasource2">Datasource2</option>
+  </select>
+
   <ag-grid-angular 
     style="width: 640px; height: 500px;" 
     class="ag-theme-balham"

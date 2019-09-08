@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Injector } from '@angular/core';
+import { NgModule, Injector, DoBootstrap } from '@angular/core';
 import { createCustomElement } from '@angular/elements';
 import { AgGridModule } from 'ag-grid-angular';
 import { GridComponent } from './grid/grid.component';
@@ -19,14 +19,14 @@ import 'ag-grid-enterprise/chartsModule';
   providers: [],
   entryComponents: [GridComponent]
 })
-export class AppModule {
-
-  constructor(injector: Injector) {
-    const btn = createCustomElement(GridComponent, { injector });
-    customElements.define('frequency-grid', btn);
-
+export class AppModule implements DoBootstrap {
+  constructor(private injector: Injector) {
+    const el = createCustomElement(GridComponent, {
+      injector: this.injector
+    });
+    customElements.define('frequency-grid', el);
   }
 
-  ngDoBootstrap() { }
-
+  ngDoBootstrap() {
+  }
 }

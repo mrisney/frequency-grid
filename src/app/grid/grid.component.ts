@@ -14,7 +14,8 @@ import { HttpClient } from '@angular/common/http';
     [columnDefs]="columnDefs">
   </ag-grid-angular>
   `,
-  styleUrls: ['grid.component.scss']
+  styleUrls: ['grid.component.scss'],
+  encapsulation: ViewEncapsulation.ShadowDom
 })
 export class GridComponent implements OnInit {
 

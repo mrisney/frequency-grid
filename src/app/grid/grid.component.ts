@@ -5,12 +5,16 @@ import { RestApiService } from '../services/rest-api.service';
 @Component({
     selector: 'frequency-grid',
     template: `
-    <select style="margin-left: 5px; margin-bottom: 10px;" class="ag-theme-balham">
-        <option [value]="Datasource" *ngFor="let source of Datasource">{{source.datasource}}</option>
+    <select style="margin-left: 5px; margin-bottom: 10px;" class="ag-theme-balham" (change)="onDataSourceChange($event.target.value)">
+        <option *ngFor="let item of datasources" value={{item.datasource}}>{{item.datasource}}</option>
     </select>
-    
+
     <select style="margin-left: 10px; margin-bottom: 10px;" class="ag-theme-balham">
-        <option [value]="variable" *ngFor="let variable of Variables">{{variable.variable}}</option>
+        <option *ngFor="let item of variables" value={{item.variable}}>{{item.variable}}</option>
+    </select>
+
+    <select style="margin-left: 10px; margin-bottom: 10px;" class="ag-theme-balham">
+        <option *ngFor="let item of filters" value={{item.filter}}>{{item.filter}}</option>
     </select>
 
   <ag-grid-angular 
@@ -36,8 +40,10 @@ export class GridComponent implements OnInit {
         { headerName: 'Cum Percent', field: 'cumulativePercent1', sortable: true, filter: true },
     ];
 
-    Datasource: any = [];
-    Variables: any = [];
+    datasources: any = [];
+    datasource: string;
+    variables: any = [];
+    filters: any = [];
     rowData: any;
 
     constructor(private http: HttpClient, public restApi: RestApiService) { }
@@ -47,16 +53,28 @@ export class GridComponent implements OnInit {
         this.loadDataSources();
     }
 
-    // Get links list
+    // get datasources
     loadDataSources() {
         return this.restApi.getDataSources().subscribe((data: {}) => {
-            this.Datasource = data;
+            this.datasources = data;
         });
     }
 
-    getVariables(datasource) {
-        return this.restApi.getVariables(datasource).subscribe((data: {}) => {
-            this.Variables = data;
+    onDataSourceChange(value: string) {
+        this.datasource = value;
+        this.getVariables();
+        this.getFilters();
+    }
+
+    getVariables() {
+        return this.restApi.getVariables(this.datasource).subscribe((data: {}) => {
+            this.variables = data;
+        });
+    }
+
+    getFilters() {
+        return this.restApi.getFilters(this.datasource).subscribe((data: {}) => {
+            this.filters = data;
         });
     }
 

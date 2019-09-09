@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DataSource } from '../shared/data-source';
 import { Variable } from '../shared/variable';
-
+import { Filter } from '../shared/filter';
 import { Observable, throwError } from 'rxjs';
 import { retry, catchError } from 'rxjs/operators';
 
@@ -41,6 +41,14 @@ export class RestApiService {
                 catchError(this.handleError)
             );
     }
+
+    getFilters(datasource): Observable<Filter> {
+        return this.http.get<Variable>(this.apiURL + '/api/v1/filters?datasource=' + datasource)
+          .pipe(
+            retry(1),
+            catchError(this.handleError)
+          )
+      }
 
     // Error handling 
     handleError(error) {

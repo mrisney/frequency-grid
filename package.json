@@ -41,6 +41,7 @@
     "@types/node": "~8.9.4",
     "@webcomponents/webcomponentsjs": "^2.2.10",
     "codelyzer": "^5.0.0",
+    "http-server": "^0.11.1",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.1.0",

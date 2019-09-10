@@ -11,19 +11,17 @@ import { map, tap, retry, catchError } from 'rxjs/operators';
 @Injectable({
     providedIn: 'root'
 })
-
 export class RestApiService {
 
     // Define API
-    apiURL = 'https://dev.itis-app.com/care-rest';
+    apiURL = 'http://dev.itis-app.com/care-rest';
 
     constructor(private http: HttpClient) { }
 
     // Http Options
     httpOptions = {
         headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            accept: 'application/json'
+            'Content-Type': 'application/json'
         })
     }
 
@@ -45,9 +43,8 @@ export class RestApiService {
             );
     }
 
-    // HttpClient API get() method => Fetch Filter List
     getFilters(datasource: string): Observable<Filter> {
-        return this.http.get<Filter>(this.apiURL + '/api/v1/filters?datasource=' + datasource)
+        return this.http.get<Variable>(this.apiURL + '/api/v1/filters?datasource=' + datasource)
             .pipe(
                 retry(1),
                 catchError(this.handleError)

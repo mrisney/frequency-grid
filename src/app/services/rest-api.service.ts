@@ -44,7 +44,7 @@ export class RestApiService {
     }
 
     getFilters(datasource: string): Observable<Filter> {
-        return this.http.get<Variable>(this.apiURL + '/api/v1/filters?datasource=' + datasource)
+        return this.http.get<Filter>(this.apiURL + '/api/v1/filters?datasource=' + datasource)
             .pipe(
                 retry(1),
                 catchError(this.handleError)

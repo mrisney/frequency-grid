@@ -49,13 +49,13 @@ export class GridComponent implements OnInit {
     request: FrequencyAnalysisRequest;
     rowData: any;
 
-  columnDefs = [
-    { headerName: 'County', field: 'variableCodes', sortable: true, filter: true },
-    { headerName: 'Frequency', field: 'frequency1', sortable: true, filter: true },
-    { headerName: 'Cum Frequency', field: 'frequency2', sortable: true, filter: true },
-    { headerName: 'Percent', field: 'percent1', sortable: true, filter: true },
-    { headerName: 'Cum Percent', field: 'cumulativePercent1', sortable: true, filter: true },
-  ];
+    columnDefs = [
+      { headerName: 'County', field: 'variableCodes', sortable: true, filter: true },
+      { headerName: 'Frequency', field: 'frequency1', sortable: true, filter: true },
+      { headerName: 'Cum Frequency', field: 'cumulativeFrequency1', sortable: true, filter: true },
+      { headerName: 'Percent', field: 'percent1', sortable: true, filter: true },
+      { headerName: 'Cum Percent', field: 'cumulativePercent1', sortable: true, filter: true },
+    ];
 
   constructor(private http: HttpClient, public restApi: RestApiService) {
 

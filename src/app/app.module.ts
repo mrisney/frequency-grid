@@ -8,7 +8,7 @@ import 'ag-grid-enterprise';
 import 'ag-grid-enterprise/chartsModule';
 
 import { LicenseManager } from 'ag-grid-enterprise';
-import { ClickablePieChartStatusBarComponent } from './click-pie-chart-status-bar/clickable-pie-chart-bar.component';
+import { StatusBarPanelComponent } from './status-bar-panel/status-bar-panel.component';
 
 // tslint:disable-next-line:max-line-length
 LicenseManager.setLicenseKey('Nubox_Colombia_SAS_NuboxColombia_single_1_Devs__13_August_2020_[v2]_MTU5NzI3NjgwMDAwMA==582da7f5b8433459a69d707ac9b3b719');
@@ -16,16 +16,16 @@ LicenseManager.setLicenseKey('Nubox_Colombia_SAS_NuboxColombia_single_1_Devs__13
 @NgModule({
     declarations: [
         GridComponent,
-        ClickablePieChartStatusBarComponent
+        StatusBarPanelComponent
     ],
     imports: [
         BrowserModule,
         HttpClientModule,
-        AgGridModule.withComponents([ClickablePieChartStatusBarComponent])
+        AgGridModule.withComponents([StatusBarPanelComponent])
 
     ],
-    providers: [],
-    entryComponents: [GridComponent, ClickablePieChartStatusBarComponent]
+    providers:[GridComponent],
+    entryComponents: [GridComponent, StatusBarPanelComponent]
 })
 export class AppModule implements DoBootstrap {
 

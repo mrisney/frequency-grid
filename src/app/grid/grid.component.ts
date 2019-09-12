@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RestApiService } from '../services/rest-api.service';
 import { FrequencyAnalysisRequest } from '../shared/frequency-analysis-request';
+import { ClickablePieChartStatusBarComponent } from '../click-pie-chart-status-bar/clickable-pie-chart-bar.component';
 
 @Component({
     selector: 'frequency-grid',
@@ -30,7 +31,9 @@ import { FrequencyAnalysisRequest } from '../shared/frequency-analysis-request';
         [enableCharts]="true"
         [allowContextMenuWithControlKey]="true"
         [columnDefs]="columnDefs"
-        [statusBar]="statusBar" 
+        [statusBar]="statusBar"
+        [rowSelection]="rowSelection"
+        [frameworkComponents]="frameworkComponents"
         (gridReady)="onGridReady($event)">
     </ag-grid-angular>
   `,
@@ -41,7 +44,7 @@ export class GridComponent implements OnInit {
 
     private gridApi;
     private gridColumnApi;
-    statusBar;
+    public statusBar;
     
     datasource: string;
     datasources: any = [];
@@ -50,6 +53,8 @@ export class GridComponent implements OnInit {
 
     request: FrequencyAnalysisRequest;
     rowData: any;
+    public rowSelection;
+    public frameworkComponents;
 
     columnDefs = [
       { headerName: 'County', field: 'variableCodes', sortable: true, filter: true },
@@ -60,22 +65,7 @@ export class GridComponent implements OnInit {
     ];
 
   constructor(private http: HttpClient, public restApi: RestApiService) {
-    this.statusBar = {
-      statusPanels: [
-        {
-          statusPanel: 'agTotalAndFilteredRowCountComponent',
-          align: 'left'
-        },
-        {
-          statusPanel: 'agTotalRowCountComponent',
-          align: 'center'
-        },
-        { statusPanel: 'agFilteredRowCountComponent' },
-        { statusPanel: 'agSelectedRowCountComponent' },
-        { statusPanel: 'agAggregationComponent' }
-      ]
-    };
-
+    
   }
 
   ngOnInit() {
@@ -83,13 +73,28 @@ export class GridComponent implements OnInit {
     this.loadDataSources();
     this.request = new FrequencyAnalysisRequest();
     this.request.suppressNulls = true;
+    this.rowSelection = "multiple";
+    this.frameworkComponents = {
+      clickablePieChartStatusBarComponent: ClickablePieChartStatusBarComponent
+    };
+    this.statusBar = {
+      statusPanels: [
+        {
+          statusPanel: 'agTotalAndFilteredRowCountComponent',
+          align: 'left'
+        },
+        {
+          statusPanel: 'clickablePieChartStatusBarComponent',
+          align: 'center'
+        }
+      ]
+    };
   }
-
   onGridReady(params) {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
     params.api.sizeColumnsToFit(); 
-  }  
+  }
   
   // Get links list
   loadDataSources() {

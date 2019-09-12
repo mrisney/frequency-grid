@@ -29,7 +29,8 @@ import { FrequencyAnalysisRequest } from '../shared/frequency-analysis-request';
         [enableRangeSelection]="true"
         [enableCharts]="true"
         [allowContextMenuWithControlKey]="true"
-        [columnDefs]="columnDefs"   
+        [columnDefs]="columnDefs"
+        [statusBar]="statusBar" 
         (gridReady)="onGridReady($event)">
     </ag-grid-angular>
   `,
@@ -40,6 +41,7 @@ export class GridComponent implements OnInit {
 
     private gridApi;
     private gridColumnApi;
+    statusBar;
     
     datasource: string;
     datasources: any = [];
@@ -58,6 +60,21 @@ export class GridComponent implements OnInit {
     ];
 
   constructor(private http: HttpClient, public restApi: RestApiService) {
+    this.statusBar = {
+      statusPanels: [
+        {
+          statusPanel: 'agTotalAndFilteredRowCountComponent',
+          align: 'left'
+        },
+        {
+          statusPanel: 'agTotalRowCountComponent',
+          align: 'center'
+        },
+        { statusPanel: 'agFilteredRowCountComponent' },
+        { statusPanel: 'agSelectedRowCountComponent' },
+        { statusPanel: 'agAggregationComponent' }
+      ]
+    };
 
   }
 

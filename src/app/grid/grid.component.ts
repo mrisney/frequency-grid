@@ -81,6 +81,7 @@ export class GridComponent implements OnInit {
     }
 
     ngOnInit() {
+
         this.loadDataSources();
         this.datasource = this.initDatasource;
         this.request = new FrequencyAnalysisRequest();
@@ -97,7 +98,7 @@ export class GridComponent implements OnInit {
             variableControl: [this.initVariable],
             filterControl: [this.initFilter]
         });
-
+        console.log('variable : ' + this.variableName + ', filter : ' + this.initFilter);
         this.request.suppressNulls = false;
         this.getFrequencyAnalysis();
 

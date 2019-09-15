@@ -1,4 +1,6 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
+
 import { HttpClient } from '@angular/common/http';
 import { RestApiService } from '../services/rest-api.service';
 import { FrequencyAnalysisRequest } from '../shared/frequency-analysis-request';
@@ -7,36 +9,38 @@ import { StatusBarPanelComponent } from '../status-bar-panel/status-bar-panel.co
 @Component({
     selector: 'frequency-grid',
     template: `
-    <select style="margin-left: 5px; margin-bottom: 10px;" class="ag-theme-balham" (change)="onDataSourceChange($event.target.value)">
-        <option *ngFor="let item of datasources" value={{item.datasource}}>{{item.datasource}}</option>
-    </select>
-    
-    <select style="margin-left: 10px; margin-bottom: 10px; width: 180px" class="ag-theme-balham" (change)="onVariableChange($event.target.value)">
-        <option *ngFor="let item of variables" value={{item.variable}}>{{item.variable}}</option>
-    </select>
-    
-    <select style="margin-left: 10px; margin-bottom: 10px; width: 180px" class="ag-theme-balham" (change)="onFilterChange($event.target.value)">
-        <option *ngFor="let item of filters" value={{item.filter}}>{{item.filter}}</option>
-    </select>
-
-    <label style="margin-left: 10px; margin-bottom: 10px;" class="ag-theme-balham">Supress Nulls ?
-        <input (change)="onNullableChange($event)" value="isNullable" type="checkbox"/>
-    </label>
-    
-    <ag-grid-angular 
-        style="width: 675px; height: 500px;" 
-        class="ag-theme-balham"
-        [rowData]="rowData | async"
-        [enableRangeSelection]="true"
-        [enableCharts]="true"
-        [allowContextMenuWithControlKey]="true"
-        [columnDefs]="columnDefs"
-        [statusBar]="statusBar"
-        [rowSelection]="rowSelection"
-        [frameworkComponents]="frameworkComponents"
-        (gridReady)="onGridReady($event)">
-    </ag-grid-angular>
-  `,
+        <form [formGroup]="parameterForm">
+            <select style="margin-left: 5px; margin-bottom: 10px;" class="ag-theme-balham"  (change)="onDataSourceChange($event.target.value)">
+                <option *ngFor="let item of datasources" value={{item.datasource}}>{{item.datasource}}</option>
+            </select>
+            
+            <select style="margin-left: 10px; margin-bottom: 10px; width: 180px" class="ag-theme-balham" formControlName="variableControl" (change)="onVariableChange($event.target.value)">
+                <option *ngFor="let item of variables" value={{item.variable}}>{{item.variable}}</option>
+            </select>
+            
+            <select style="margin-left: 10px; margin-bottom: 10px; width: 180px" class="ag-theme-balham" formControlName="filterControl" (change)="onFilterChange($event.target.value)">
+                <option *ngFor="let item of filters" value={{item.filter}}>{{item.filter}}</option>
+            </select>
+            
+            <label style="margin-left: 10px; margin-bottom: 10px;" class="ag-theme-balham">Supress Nulls ?
+                <input (change)="onNullableChange($event)" value="isNullable" type="checkbox"/>
+            </label>
+        </form>
+        
+        <ag-grid-angular 
+            style="width: 675px; height: 500px;" 
+            class="ag-theme-balham"
+            [rowData]="rowData | async"
+            [enableRangeSelection]="true"
+            [enableCharts]="true"
+            [allowContextMenuWithControlKey]="true"
+            [columnDefs]="columnDefs"
+            [statusBar]="statusBar"
+            [rowSelection]="rowSelection"
+            [frameworkComponents]="frameworkComponents"
+            (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+    `,
     styleUrls: ['grid.component.scss'],
     encapsulation: ViewEncapsulation.ShadowDom
 })
@@ -46,10 +50,18 @@ export class GridComponent implements OnInit {
     private gridColumnApi;
     public statusBar;
 
+    @Input() initDatasource: string;
+    @Input() initFilter: string;
+    @Input() initVariable: string;
+
     datasource: string;
+    variableName: string;
     datasources: any = [];
     variables: any = [];
     filters: any = [];
+
+    parameterForm: FormGroup;
+    datasourceSelect: string;
 
     request: FrequencyAnalysisRequest;
     rowData: any;
@@ -57,23 +69,40 @@ export class GridComponent implements OnInit {
     public frameworkComponents;
 
     columnDefs = [
-        { headerName: 'County', field: 'variableCodes', sortable: true, filter: true },
+        { headerName: 'Variable', field: 'variableCodes', sortable: true, filter: true, ColId: 'variableCol' },
         { headerName: 'Frequency', field: 'frequency1', sortable: true, filter: true },
         { headerName: 'Cum Frequency', field: 'cumulativeFrequency1', sortable: true, filter: true },
         { headerName: 'Percent', field: 'percent1', sortable: true, filter: true },
         { headerName: 'Cum Percent', field: 'cumulativePercent1', sortable: true, filter: true },
     ];
 
-    constructor(private http: HttpClient, public restApi: RestApiService) {
+    constructor(private fb: FormBuilder, private http: HttpClient, public restApi: RestApiService) {
 
     }
 
     ngOnInit() {
-        this.rowData = this.http.get('http://dev.itis-app.com/care-rest/api/v1/frequency-analysis?datasource=IXNS_2008-2019&filterName=County%5C%5CLaramie&suppressNulls=true&variableName=C001%3A%20County');
         this.loadDataSources();
+        this.datasource = this.initDatasource;
         this.request = new FrequencyAnalysisRequest();
-        this.request.suppressNulls = true;
-        this.rowSelection = "multiple";
+        this.request.dataSourceName = this.datasource;
+    
+        this.getFilters();
+        this.request.filterName = this.initFilter;
+
+        this.getVariables();
+        this.variableName = this.initVariable;
+        this.request.variableName = this.initVariable;
+
+        this.parameterForm = this.fb.group({
+            variableControl: [this.initVariable],
+            filterControl: [this.initFilter]
+        });
+
+        this.request.suppressNulls = false;
+        this.getFrequencyAnalysis();
+
+        this.rowSelection = 'multiple';
+        
         this.frameworkComponents = {
             statusBarPanelComponent: StatusBarPanelComponent
         };
@@ -90,13 +119,13 @@ export class GridComponent implements OnInit {
             ]
         };
     }
+
     onGridReady(params) {
         this.gridApi = params.api;
         this.gridColumnApi = params.columnApi;
         params.api.sizeColumnsToFit();
     }
-
-    // Get links list
+    
     loadDataSources() {
         return this.restApi.getDataSources().subscribe((data: {}) => {
             this.datasources = data;
@@ -114,6 +143,8 @@ export class GridComponent implements OnInit {
     onVariableChange(value: string) {
         this.request.variableName = value;
         this.getFrequencyAnalysis();
+        // this.gridApi.getColumnDef('variableCol').headerName = value;
+        this.gridApi.refreshHeader();
     }
 
     onFilterChange(value: string) {
@@ -140,17 +171,17 @@ export class GridComponent implements OnInit {
     }
 
     getFrequencyAnalysis() {
-        console.log(JSON.stringify(this.request));
+        console.log('request = ' + JSON.stringify(this.request));
         this.rowData = this.restApi.getFrequencyAnalysis(this.request);
     }
 
     pieChart() {
-        var cellRange = {
+        const cellRange = {
             rowStartIndex: 0,
             rowEndIndex: this.gridApi.getDisplayedRowCount(),
             columns: ['variableCodes', 'frequency1']
         };
-        var chartRangeParams = {
+        const chartRangeParams = {
             cellRange: cellRange,
             chartType: 'pie'
         };
@@ -158,16 +189,15 @@ export class GridComponent implements OnInit {
     }
 
     stackedBarChart() {
-        var cellRange = {
+        const cellRange = {
             rowStartIndex: 0,
             rowEndIndex: this.gridApi.getDisplayedRowCount(),
             columns: ['variableCodes', 'frequency1']
         };
-        var chartRangeParams = {
+        const chartRangeParams = {
             cellRange: cellRange,
             chartType: 'stackedBar'
         };
         this.gridApi.chartRange(chartRangeParams);
     }
-
 }

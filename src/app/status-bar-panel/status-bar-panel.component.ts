@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, RowNode, IStatusPanel, IStatusPanelParams } from "ag-grid-community";
-import { IFilterAngularComp } from 'ag-grid-angular';
+import { IStatusPanelParams } from 'ag-grid-community';
 import { GridComponent } from '../grid/grid.component';
 
 @Component({
-    selector: 'status-component',
+    selector: 'frequency-status-component',
     template: `
         <div style="margin-left: 10px; margin-top: 8px; float:left;" class="container" *ngIf="visible">
             <div style="float:left;">
@@ -17,7 +16,9 @@ import { GridComponent } from '../grid/grid.component';
     `
 })
 export class StatusBarPanelComponent {
+
     private params: IStatusPanelParams;
+    
     public visible = true;
 
     constructor(public gridComponent: GridComponent) { }

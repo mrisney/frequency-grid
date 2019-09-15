@@ -93,6 +93,8 @@ export class GridComponent implements OnInit {
         this.getVariables();
         this.variableName = this.initVariable;
         this.request.variableName = this.initVariable;
+        //const variableColDef = this.gridColumnApi.getColumn('variableCodes').getColDef();
+        //variableColDef.headerName = this.initVariable;
 
         this.parameterForm = this.fb.group({
             variableControl: [this.initVariable],
@@ -144,7 +146,8 @@ export class GridComponent implements OnInit {
     onVariableChange(value: string) {
         this.request.variableName = value;
         this.getFrequencyAnalysis();
-        // this.gridApi.getColumnDef('variableCol').headerName = value;
+        const variableColDef = this.gridColumnApi.getColumn('variableCodes').getColDef();
+        variableColDef.headerName = value;
         this.gridApi.refreshHeader();
     }
 

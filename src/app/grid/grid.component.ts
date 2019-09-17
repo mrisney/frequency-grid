@@ -10,7 +10,7 @@ import { StatusBarPanelComponent } from '../status-bar-panel/status-bar-panel.co
     selector: 'frequency-grid',
     template: `
         <form [formGroup]="parameterForm">
-            <select style="margin-left: 5px; margin-bottom: 10px;" class="ag-theme-balham"  (change)="onDataSourceChange($event.target.value)">
+            <select style="margin-left: 10px; margin-bottom: 10px;" class="ag-theme-balham"  (change)="onDataSourceChange($event.target.value)">
                 <option *ngFor="let item of datasources" value={{item.datasource}}>{{item.datasource}}</option>
             </select>
             
@@ -28,7 +28,7 @@ import { StatusBarPanelComponent } from '../status-bar-panel/status-bar-panel.co
         </form>
         
         <ag-grid-angular 
-            style="width: 675px; height: 500px;" 
+            style="width: 100%; height: 100%;" 
             class="ag-theme-balham"
             [rowData]="rowData | async"
             [enableRangeSelection]="true"

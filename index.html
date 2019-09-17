@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Grid</title>
     <script src="https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.js"></script>
-    <script src= "./frequency-grid.js"></script>
+    <script src="./frequency-grid.js"></script>
   </head>
   <body>
-    <frequency-grid
-      init-datasource="CRASHES_2009-2018"
-      init-filter="Year\2018"
-      init-variable="County">
-    </frequency-grid>
+    <div style="width: 700px; height: 700px;">
+      <frequency-grid
+        init-datasource="CRASHES_2009-2018"
+        init-filter="Year\2018"
+        init-variable="County">
+      </frequency-grid>
+    </div>
   </body>
 </html>

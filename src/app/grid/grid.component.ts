@@ -38,7 +38,9 @@ import { StatusBarPanelComponent } from '../status-bar-panel/status-bar-panel.co
             [statusBar]="statusBar"
             [rowSelection]="rowSelection"
             [frameworkComponents]="frameworkComponents"
-            (gridReady)="onGridReady($event)">
+            (gridReady)="onGridReady($event)"
+            (firstDataRendered)="onFirstDataRendered($event)"
+            (rowDataChanged)="onRowDataChanged($event)">
         </ag-grid-angular>
     `,
     styleUrls: ['grid.component.scss'],
@@ -50,6 +52,7 @@ export class GridComponent implements OnInit {
     private gridColumnApi;
     public statusBar;
 
+    @Input() initChart: string;
     @Input() initDatasource: string;
     @Input() initFilter: string;
     @Input() initVariable: string;
@@ -60,13 +63,16 @@ export class GridComponent implements OnInit {
     variables: any = [];
     filters: any = [];
 
+    initChartType: string;
+    chart: any;
     parameterForm: FormGroup;
     datasourceSelect: string;
 
     request: FrequencyAnalysisRequest;
     rowData: any;
-    public rowSelection;
-    public frameworkComponents;
+
+    public rowSelection: any;
+    public frameworkComponents: any;
 
     columnDefs = [
         { headerName: 'Variable', field: 'variableCodes', sortable: true, filter: true, ColId: 'variableCol' },
@@ -86,15 +92,13 @@ export class GridComponent implements OnInit {
         this.datasource = this.initDatasource;
         this.request = new FrequencyAnalysisRequest();
         this.request.dataSourceName = this.datasource;
-    
+
         this.getFilters();
         this.request.filterName = this.initFilter;
 
         this.getVariables();
         this.variableName = this.initVariable;
         this.request.variableName = this.initVariable;
-        //const variableColDef = this.gridColumnApi.getColumn('variableCodes').getColDef();
-        //variableColDef.headerName = this.initVariable;
 
         this.parameterForm = this.fb.group({
             variableControl: [this.initVariable],
@@ -104,8 +108,9 @@ export class GridComponent implements OnInit {
         this.request.suppressNulls = false;
         this.getFrequencyAnalysis();
 
+        this.initChartType = this.initChart;
         this.rowSelection = 'multiple';
-        
+
         this.frameworkComponents = {
             statusBarPanelComponent: StatusBarPanelComponent
         };
@@ -126,9 +131,39 @@ export class GridComponent implements OnInit {
     onGridReady(params) {
         this.gridApi = params.api;
         this.gridColumnApi = params.columnApi;
-        params.api.sizeColumnsToFit();
+        window.onresize = () => {
+            this.gridApi.sizeColumnsToFit();
+        }
     }
-    
+
+    onFirstDataRendered(params) {
+        console.log('data onFirstDataRendered()...');
+        this.gridApi.sizeColumnsToFit();
+        if (this.initChartType) {
+            console.log("chart type = "+this.initChartType);
+            if (this.initChartType === 'pie') {
+                this.pieChart();
+            } else {
+                this.stackedBarChart();
+            }
+        }
+    }
+
+    onRowDataChanged(params) {
+        console.log('data onRowDataChanged()...');
+        this.gridApi.sizeColumnsToFit();
+        if (this.initChartType && this.chart) {
+            this.chart.destroyChart();
+            console.log("chart type = "+this.initChartType);
+            if (this.initChartType === 'pie') {
+                this.pieChart();
+            } else {
+                this.stackedBarChart();
+            }
+        }
+    }
+
+
     loadDataSources() {
         return this.restApi.getDataSources().subscribe((data: {}) => {
             this.datasources = data;
@@ -189,7 +224,8 @@ export class GridComponent implements OnInit {
             cellRange: cellRange,
             chartType: 'pie'
         };
-        this.gridApi.chartRange(chartRangeParams);
+        this.initChartType = 'pie';
+        this.chart = this.gridApi.chartRange(chartRangeParams);
     }
 
     stackedBarChart() {
@@ -202,6 +238,7 @@ export class GridComponent implements OnInit {
             cellRange: cellRange,
             chartType: 'stackedBar'
         };
-        this.gridApi.chartRange(chartRangeParams);
+        this.initChartType = 'bar';
+        this.chart = this.gridApi.chartRange(chartRangeParams);
     }
 }

@@ -225,7 +225,7 @@ export class GridComponent implements OnInit {
             chartType: 'pie'
         };
         this.initChartType = 'pie';
-        this.chart = this.gridApi.chartRange(chartRangeParams);
+        this.chart = this.gridApi.createRangeChart(chartRangeParams);
     }
 
     stackedBarChart() {
@@ -239,6 +239,6 @@ export class GridComponent implements OnInit {
             chartType: 'stackedBar'
         };
         this.initChartType = 'bar';
-        this.chart = this.gridApi.chartRange(chartRangeParams);
+        this.chart = this.gridApi.createRangeChart(chartRangeParams);
     }
 }

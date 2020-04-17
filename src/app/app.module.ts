@@ -5,12 +5,13 @@ import { createCustomElement } from '@angular/elements';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AgGridModule } from 'ag-grid-angular';
+import { AgChartsAngularModule } from 'ag-charts-angular';
 import { NgxTypeaheadModule } from 'ngx-typeahead';
 import { GridComponent } from './grid/grid.component';
 import { StatusBarPanelComponent } from './status-bar-panel/status-bar-panel.component';
 
 import 'ag-grid-enterprise';
-import 'ag-grid-enterprise/chartsModule';
+
 import { LicenseManager } from 'ag-grid-enterprise';
 
 // tslint:disable-next-line:max-line-length
@@ -27,6 +28,7 @@ LicenseManager.setLicenseKey('Nubox_Colombia_SAS_NuboxColombia_single_1_Devs__13
         ReactiveFormsModule,
         HttpClientModule,
         NgxTypeaheadModule,
+        AgChartsAngularModule,
         AgGridModule.withComponents([StatusBarPanelComponent])
 
     ],

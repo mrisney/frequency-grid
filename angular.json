@@ -61,8 +61,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "50kb",
+                  "maximumError": "100kb"
                 }
               ]
             }
@@ -130,5 +130,8 @@
       }
     }
   },
-  "defaultProject": "grid"
+  "defaultProject": "grid",
+  "cli": {
+    "analytics": false
+  }
 }
